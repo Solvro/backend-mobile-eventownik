@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os, json
+
+from django.templatetags.static import static
 from dotenv import load_dotenv
 from datetime import timedelta
 
@@ -51,6 +53,9 @@ CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", "false").lower() ==
 # Application definition
 
 INSTALLED_APPS = [
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
     "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -354,3 +359,20 @@ CELERY_FLOWER_URL = os.getenv("CELERY_FLOWER_URL", "http://localhost:5555")
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
+
+
+# unfold config
+UNFOLD = {
+    "SITE_HEADER": "Eventownik",
+    "SITE_ICON": {
+        "light": lambda request: static("logo_v2.png"),
+        "dark": lambda request: static("logo_v2.png"),
+    },
+    "SITE_SUBHEADER": "Zarządzanie wydarzeniami",
+    "SHOW_HISTORY": True,
+    "SHOW_VIEW_ON_SITE": True,
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": False,
+    },
+}
