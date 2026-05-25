@@ -1,11 +1,12 @@
 from ..models import LifeGuard, SoberDuty, Staff, User, MealDuty
 
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 from orderable.admin import OrderableAdmin
 
 
 @admin.register(LifeGuard)
-class LifeGuardAdmin(admin.ModelAdmin):
+class LifeGuardAdmin(ModelAdmin):
     list_display = ("user",)
     search_fields = ("user",)
 
@@ -18,7 +19,7 @@ class LifeGuardAdmin(admin.ModelAdmin):
 
 
 @admin.register(SoberDuty)
-class SoberDutyAdmin(admin.ModelAdmin):
+class SoberDutyAdmin(ModelAdmin):
     list_display = ("user", "start", "end")
     search_fields = ("user", "start", "end")
 
@@ -31,7 +32,7 @@ class SoberDutyAdmin(admin.ModelAdmin):
 
 
 @admin.register(MealDuty)
-class MealDutyAdmin(admin.ModelAdmin):
+class MealDutyAdmin(ModelAdmin):
     list_display = ("user", "start", "end")
     search_fields = ("user", "start", "end")
 
