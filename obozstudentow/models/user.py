@@ -25,7 +25,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     username = None
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
     phoneNumber = models.CharField(max_length=12, blank=True, null=True)
     bandId = models.CharField(max_length=6, blank=True, null=True, unique=True)
     photo = ResizedImageField(

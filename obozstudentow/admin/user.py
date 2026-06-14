@@ -125,6 +125,18 @@ class ParticipantResource(resources.ModelResource):
         column_name="bus", attribute="bus", widget=ForeignKeyWidget(Bus, "description")
     )
 
+    def before_import_row(self, row, **kwargs):
+        email = row.get("email")
+        # rozwiazanie problemu pustych wierszy
+        if not email or str(email).strip() == "":
+            row["email"] = None
+
+    def before_save_instance(self, instance, *args, **kwargs):
+        if not instance.email or str(instance.email).strip() == "":
+            instance.email = None
+
+        super().before_save_instance(instance, *args, **kwargs)
+
     def after_import_row(self, row, row_result, **kwargs):
         frakcja_name = row.get("frakcja", None)
         if frakcja_name and row_result.instance:
