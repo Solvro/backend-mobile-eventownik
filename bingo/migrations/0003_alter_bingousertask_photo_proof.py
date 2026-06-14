@@ -5,7 +5,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bingo", "0002_remove_bingousertask_photo_proof_url_and_more"),
     ]
