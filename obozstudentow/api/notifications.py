@@ -1,8 +1,13 @@
+import json
+import logging
+import os
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth.decorators import permission_required
 
 from ..models import UserFCMToken
+
+from celery import shared_task
 
 
 @api_view(["POST"])
@@ -36,20 +41,38 @@ import firebase_admin
 from firebase_admin import credentials, messaging
 from obozstudentowProject.settings import BASE_DIR
 
-if (BASE_DIR / "oboz-studentow-pwr-firebase-adminsdk.json").exists():
+firebase_credentials_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
+
+if firebase_credentials_json:
+    try:
+        cred = credentials.Certificate(json.loads(firebase_credentials_json))
+        firebase_admin.initialize_app(cred)
+    except Exception as exc:  # pragma: no cover - defensive
+        logging.error(
+            "Invalid FIREBASE_CREDENTIALS_JSON. Firebase cannot be initialized. Error: %s",
+            exc,
+        )
+elif (BASE_DIR / "oboz-studentow-pwr-firebase-adminsdk.json").exists():
     cred = credentials.Certificate(
         BASE_DIR / "oboz-studentow-pwr-firebase-adminsdk.json"
     )
     firebase_admin.initialize_app(cred)
 else:
-    import logging
-
     logging.error(
-        "Firebase certificate file is missing. Firebase cannot be initialized."
+        "Firebase credentials are missing. Set FIREBASE_CREDENTIALS_JSON or provide oboz-studentow-pwr-firebase-adminsdk.json file."
     )
 
 
+@shared_task(max_retries=3, default_retry_delay=30)
 def send_notification(title, body, tokens, link=None):
+    # Guard: if no tokens, avoid calling Firebase (would raise max_workers must be > 0)
+    if not tokens:
+        return "Brak tokenów - pomijam wysyłkę powiadomienia"
+
+    # Guard: Firebase not initialized (missing credentials file)
+    if not firebase_admin._apps:  # pragma: no cover - defensive
+        return "Firebase nie został zainicjalizowany - pomijam wysyłkę"
+
     message = messaging.MulticastMessage(
         notification=messaging.Notification(title=title, body=body),
         tokens=tokens,
@@ -62,6 +85,8 @@ def send_notification(title, body, tokens, link=None):
                 aps=messaging.Aps(sound="default"),
             ),
         ),
+        data={"link": link} if link else None,
     )
     response = messaging.send_each_for_multicast(message)
-    return response
+    info = f"Wysłano powiadomienie do {response.success_count} użytkowników, {response.failure_count} niepowodzeń"
+    return info

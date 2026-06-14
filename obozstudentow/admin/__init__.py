@@ -5,11 +5,11 @@ from .people import *
 from .workshop import *
 from .user import *
 
-from import_export.admin import ImportExportModelAdmin
+from .import_export_admin import ImportExportModelAdmin
 
 from orderable.admin import OrderableAdmin
-
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 from django.utils.translation import gettext_lazy as _
 from ..models import Link, FAQ, ScheduleItem, User, Icons, HomeLink
 
@@ -40,7 +40,7 @@ def show_maps(modeladmin, request, queryset):
     queryset.update(hide_map=False)
 
 
-class ScheduleItemAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class ScheduleItemAdmin(ImportExportModelAdmin, ModelAdmin):
     list_display = (
         "name",
         "description",
@@ -58,7 +58,7 @@ class ScheduleItemAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(Icons)
-class IconsAdmin(admin.ModelAdmin):
+class IconsAdmin(ModelAdmin):
     list_display = ("name", "icon")
     search_fields = ("name", "icon")
 
@@ -76,7 +76,7 @@ def hide_announncements(modeladmin, request, queryset):
 
 
 @admin.register(Announcement)
-class AnnouncementAdmin(admin.ModelAdmin):
+class AnnouncementAdmin(ModelAdmin):
     list_display = ("title", "content", "date", "addedBy", "group", "visible")
     search_fields = ("title", "content", "date", "addedBy", "group", "visible")
 
@@ -94,7 +94,7 @@ from ..models import DailyQuest
 
 
 @admin.register(DailyQuest)
-class DailyQuestAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class DailyQuestAdmin(ImportExportModelAdmin, ModelAdmin):
     list_display = ("title", "description", "start", "finish", "group", "visible")
     search_fields = (
         "title",
@@ -110,7 +110,7 @@ from ..models import Bus
 
 
 @admin.register(Bus)
-class BusAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class BusAdmin(ImportExportModelAdmin, ModelAdmin):
     list_display = ("__str__", "user_count_to", "user_count_return", "location")
     search_fields = ("description", "location")
 
@@ -133,7 +133,7 @@ from ..models import Image
 
 
 @admin.register(Image)
-class ImageAdmin(admin.ModelAdmin):
+class ImageAdmin(ModelAdmin):
     list_display = ("name", "image", "visible")
     search_fields = ("name", "image")
     list_filter = ("visible",)
@@ -143,7 +143,7 @@ from ..models import Setting
 
 
 @admin.register(Setting)
-class SettingAdmin(admin.ModelAdmin):
+class SettingAdmin(ModelAdmin):
     list_display = ("name", "description", "value")
     search_fields = ("name", "description", "value")
     readonly_fields = ("name", "description")
