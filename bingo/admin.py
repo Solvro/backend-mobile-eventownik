@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from unfold.admin import ModelAdmin
 from django.contrib import admin, messages
 from .models import BingoUserInstance, BingoTaskTemplate, BingoUserTask
 from .utils import create_bingo_for_user
@@ -34,7 +35,7 @@ def generate_bingo_for_selected_users(modeladmin, request, queryset):
     )
 
 
-class BingoUserTaskAdmin(admin.ModelAdmin):
+class BingoUserTaskAdmin(ModelAdmin):
     list_display = (
         "task",
         "instance",
@@ -88,7 +89,7 @@ class BingoUserTaskInlineForActiveGames(admin.TabularInline):
 
 
 @admin.register(BingoUserInstance)
-class BingoUserInstanceAdmin(admin.ModelAdmin):
+class BingoUserInstanceAdmin(ModelAdmin):
     list_display = (
         "user",
         "review_status",
@@ -108,7 +109,7 @@ class BingoUserInstanceAdmin(admin.ModelAdmin):
 
 
 @admin.register(BingoTaskTemplate)
-class BingoTaskTemplateAdmin(admin.ModelAdmin):
+class BingoTaskTemplateAdmin(ModelAdmin):
     list_display = ("task_name", "is_active")
 
 

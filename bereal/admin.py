@@ -1,4 +1,5 @@
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils import timezone
@@ -7,7 +8,7 @@ from .models import BerealPost, BerealLike, BerealReport, BerealNotification
 
 
 @admin.register(BerealPost)
-class BeerealPostAdmin(admin.ModelAdmin):
+class BeerealPostAdmin(ModelAdmin):
     list_display = (
         "user",
         "bereal_date",
@@ -48,7 +49,7 @@ class BeerealPostAdmin(admin.ModelAdmin):
 
 
 @admin.register(BerealLike)
-class BeerealLikeAdmin(admin.ModelAdmin):
+class BeerealLikeAdmin(ModelAdmin):
     list_display = ("user", "post_user", "post_date", "created_at")
     list_filter = ("created_at", "post__bereal_date")
     search_fields = (
@@ -71,7 +72,7 @@ class BeerealLikeAdmin(admin.ModelAdmin):
 
 
 @admin.register(BerealReport)
-class BeerealReportAdmin(admin.ModelAdmin):
+class BeerealReportAdmin(ModelAdmin):
     list_display = (
         "reporter",
         "post_user",
@@ -123,7 +124,7 @@ class BeerealReportAdmin(admin.ModelAdmin):
 
 
 @admin.register(BerealNotification)
-class BeerealNotificationAdmin(admin.ModelAdmin):
+class BeerealNotificationAdmin(ModelAdmin):
     list_display = (
         "date",
         "sent_at",
