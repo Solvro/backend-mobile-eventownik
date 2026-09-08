@@ -1,5 +1,6 @@
 from typing import Any
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 from django.db.models.fields.related import ForeignKey
 from django.forms.models import ModelChoiceField
 from django.http.request import HttpRequest
@@ -33,14 +34,14 @@ class WorkshopLeaderInline(admin.TabularInline):
 
 
 @admin.register(WorkshopLeader)
-class WorkshopLeaderAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class WorkshopLeaderAdmin(ImportExportModelAdmin, ModelAdmin):
     list_display = ("user", "workshop")
     search_fields = ("user__first_name", "user__last_name", "workshop__name")
     list_filter = ("workshop",)
 
 
 @admin.register(Workshop)
-class WorkshopAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class WorkshopAdmin(ImportExportModelAdmin, ModelAdmin):
     def signups(self, obj):
         return str(obj.workshopsignup_set.count()) + "/" + str(obj.userLimit)
 

@@ -1,17 +1,18 @@
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 
 # Register your models here.
 from .models import *
 
 
 @admin.register(Message)
-class MessageAdmin(admin.ModelAdmin):
+class MessageAdmin(ModelAdmin):
     list_display = ("user", "message", "date", "chat")
     list_filter = ("chat",)
 
 
 @admin.register(Chat)
-class ChatAdmin(admin.ModelAdmin):
+class ChatAdmin(ModelAdmin):
     list_display = ("name", "enabled", "user_count")
     list_filter = ("enabled", "users")
 

@@ -3,8 +3,8 @@ from django.http import HttpRequest
 from .import_export_admin import ImportExportModelAdmin
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget, ManyToManyWidget
-
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.db.models import F
@@ -124,6 +124,18 @@ class ParticipantResource(resources.ModelResource):
     bus = fields.Field(
         column_name="bus", attribute="bus", widget=ForeignKeyWidget(Bus, "description")
     )
+
+    def before_import_row(self, row, **kwargs):
+        email = row.get("email")
+        # rozwiazanie problemu pustych wierszy
+        if not email or str(email).strip() == "":
+            row["email"] = None
+
+    def before_save_instance(self, instance, *args, **kwargs):
+        if not instance.email or str(instance.email).strip() == "":
+            instance.email = None
+
+        super().before_save_instance(instance, *args, **kwargs)
 
     def after_import_row(self, row, row_result, **kwargs):
         frakcja_name = row.get("frakcja", None)
@@ -468,7 +480,7 @@ class ZdjeciaKadra(User):
 
 
 @admin.register(ZdjeciaKadra)
-class ZdjeciaKadraAdmin(admin.ModelAdmin):
+class ZdjeciaKadraAdmin(ModelAdmin):
     list_display = ("first_name", "last_name", "has_image", "title")
 
     list_filter = ("groups",)
